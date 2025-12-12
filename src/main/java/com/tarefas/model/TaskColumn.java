@@ -1,5 +1,6 @@
 package com.tarefas.model;
 
+import com.tarefas.model.task.Task;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Column {
+public class TaskColumn {
     private String id;
     private String title;
     private String description;

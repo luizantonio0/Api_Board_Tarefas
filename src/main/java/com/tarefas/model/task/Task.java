@@ -1,7 +1,8 @@
-package com.tarefas.model;
+package com.tarefas.model.task;
 
 
-import com.tarefas.changes_tasks.ChangesMadeByUser;
+import com.tarefas.model.TaskColumn;
+import com.tarefas.model.User;
 import com.tarefas.model.enums.task.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,24 +18,23 @@ import java.util.List;
 public class Task {
     private String id;
     private String name;
+    // Só o manager pode alterar dados da task
     private String description;
     private User creator;
     private User manager;
     private User completedBy;
-    private String column;
     private TaskStatus status;
     private boolean completed;
     private boolean cancelled;
-    //bloqueia a task
-    private boolean blocked;
+    //TODO: deve registrar o tempo que demorou em cada coluna(insert AT, moved AT)
+    private TaskColumn taskColumn;
+    private OffsetDateTime enteredCurrentColumnAt;
+    //bloqueia a task, quando há um novo bloqueio deve instanciar um novo objeto
+    private BlockedTask blocked;
     //create a task
-    private OffsetDateTime creationDate;
+    private OffsetDateTime createdAt;
     private OffsetDateTime completionDate;
     private OffsetDateTime completedDate;
     //start the task
     private OffsetDateTime startDate;
-    private List<ChangesMadeByUser> blockerUsers;
-    private List<ChangesMadeByUser> deblockerUsers;
-    private List<ChangesMadeByUser> ChangesMadeByUsers;
-
 }

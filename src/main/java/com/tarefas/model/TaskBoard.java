@@ -16,5 +16,5 @@ public class TaskBoard {
     private String title;
     private String description;
     private User author;
-    private List<Column> columns;
+    private List<TaskColumn> taskColumns;
 }
