@@ -75,7 +75,10 @@ public class TaskService {
 
 
         var rb = task.get().getBlocked().stream().max(Comparator.comparing( b -> b.getUserBlocked().date()))
-                .orElseThrow(() -> new IllegalStateException("System error, please contact our support"));
+                .orElseThrow(() -> new IllegalStateException("System error, please contact our support, no object found"));
+
+        if (rb.getUserUnblocked() == null) throw new IllegalStateException("System error, please contact our support, illegal object found");
+
         rb.setReasonUnblocked(reason);
         rb.setUserBlocked(new ChangeMadeByUser(user.getId(), OffsetDateTime.now()));
         rb.setBlocked(false);
