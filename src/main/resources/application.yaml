@@ -1,3 +1,14 @@
 spring:
   application:
     name: tarefas
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/api_board_tarefa
+    username: root
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
