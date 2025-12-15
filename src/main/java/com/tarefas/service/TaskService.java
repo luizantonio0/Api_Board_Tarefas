@@ -1,11 +1,14 @@
 package com.tarefas.service;
 
 import com.tarefas.dto.creationDTO.TaskCreationDTO;
+import com.tarefas.model.TaskBoard;
+import com.tarefas.model.TaskColumn;
 import com.tarefas.model.User;
 import com.tarefas.model.task.BlockedTask;
 import com.tarefas.model.task.Task;
 import com.tarefas.model.task.changes_tasks.ChangeMadeByUser;
 import com.tarefas.repository.TaskRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -15,9 +18,11 @@ import java.util.UUID;
 
 @Service
 public class TaskService {
+    private final EntityManager entityManager;
     private final TaskRepository repository;
 
-    public TaskService(TaskRepository repository) {
+    public TaskService(EntityManager entityManager, TaskRepository repository) {
+        this.entityManager = entityManager;
         this.repository = repository;
     }
 
@@ -26,9 +31,23 @@ public class TaskService {
     }
 
     public Task save(TaskCreationDTO taskCreationDTO) {
-        return this.repository.save(
-                new Task(taskCreationDTO)
+
+        var t = new Task(taskCreationDTO);
+
+        t.setManager(
+                entityManager.getReference(User.class, taskCreationDTO.manager())
         );
+        t.setCreator(
+                entityManager.getReference(User.class, taskCreationDTO.creator())
+        );
+        t.setTaskColumn(
+                entityManager.getReference(TaskColumn.class, taskCreationDTO.taskColumn())
+        );
+        t.setTaskBoard(
+                entityManager.getReference(TaskBoard.class, taskCreationDTO.taskBoard())
+        );
+
+        return this.repository.save(t);
     }
 
     public Task Update(Task task) {

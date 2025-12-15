@@ -30,11 +30,19 @@ public class Task {
     private String name;
     // Só o manager pode alterar dados da task
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "userCreatorId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "userCreatorId",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_tb001_tb002_c")
+    )
     private User creator;
-    @ManyToOne
-    @JoinColumn(name = "userManagerId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "userManagerId",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_tb001_tb002_m")
+    )
     private User manager;
     private UUID completedBy;
     private TaskStatus status;
@@ -42,12 +50,23 @@ public class Task {
     private boolean cancelled;
     private boolean IsBlocked;
     //TODO: deve registrar o tempo que demorou em cada coluna(insert AT, moved AT)
-    @ManyToOne
-    @JoinColumn(name = "taskColumnId")
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "taskColumnId",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_tb003_tb002")
+    )
     private TaskColumn taskColumn;
-    @ManyToOne
-    @JoinColumn(name = "taskBoardId")
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "taskBoardId",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_tb004_tb002")
+    )
     private TaskBoard taskBoard;
+
     private OffsetDateTime enteredCurrentColumnAt;
     //bloqueia a task, quando há um novo bloqueio deve instanciar um novo objeto
     @OneToMany(mappedBy = "task")
@@ -60,18 +79,20 @@ public class Task {
     private OffsetDateTime startDate;
 
     public Task(TaskCreationDTO taskCreationDTO) {
+
+
         var now = OffsetDateTime.now();
         this.name = taskCreationDTO.name();
         this.description = taskCreationDTO.description();
-        this.creator = taskCreationDTO.creator();
-        this.manager = taskCreationDTO.manager();
+        this.creator = null;
+        this.manager = null;
         this.completedBy = null;
         this.status = TaskStatus.CREATED;
         this.completed = false;
         this.cancelled = false;
         this.IsBlocked = false;
-        this.taskColumn = taskCreationDTO.taskColumn();
-        this.taskBoard = taskCreationDTO.taskBoard();
+        this.taskColumn = null;
+        this.taskBoard = null;
         this.enteredCurrentColumnAt = now;
         this.blocked = null;
         this.createdAt = now;
