@@ -1,7 +1,7 @@
 package com.tarefas.model.task;
 
 
-import com.tarefas.dto.creationDTO.TaskCreationDTO;
+import com.tarefas.dto.request.TaskCreationDTO;
 import com.tarefas.model.TaskBoard;
 import com.tarefas.model.TaskColumn;
 import com.tarefas.model.User;
@@ -79,9 +79,8 @@ public class Task {
     private OffsetDateTime startDate;
 
     public Task(TaskCreationDTO taskCreationDTO) {
-
-
         var now = OffsetDateTime.now();
+
         this.name = taskCreationDTO.name();
         this.description = taskCreationDTO.description();
         this.creator = null;

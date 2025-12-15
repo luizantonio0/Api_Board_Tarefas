@@ -1,5 +1,6 @@
 package com.tarefas.controller;
 
+import com.tarefas.dto.request.TaskBoardCreationDTO;
 import com.tarefas.model.TaskBoard;
 import com.tarefas.service.TaskBoardService;
 import org.springframework.http.HttpStatus;
@@ -29,8 +30,8 @@ public class TaskBoardController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskBoard> createTaskBoard(@RequestBody TaskBoard taskBoard) {
-        return new ResponseEntity<>(this.service.save(taskBoard), HttpStatus.CREATED);
+    public ResponseEntity<UUID> createTaskBoard(@RequestBody TaskBoardCreationDTO taskBoard) {
+        return new ResponseEntity<>(this.service.save(taskBoard).getId(), HttpStatus.CREATED);
     }
 
     @PatchMapping

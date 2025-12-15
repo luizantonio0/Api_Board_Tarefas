@@ -1,5 +1,6 @@
 package com.tarefas.controller;
 
+import com.tarefas.dto.request.TaskColumnCreationDTO;
 import com.tarefas.model.TaskColumn;
 import com.tarefas.service.TaskColumnService;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class TaskColumnController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskColumn> createTaskColumn(@RequestBody TaskColumn taskBoard) {
-        return new ResponseEntity<>(this.service.save(taskBoard), HttpStatus.CREATED);
+    public ResponseEntity<UUID> createTaskColumn(@RequestBody TaskColumnCreationDTO taskBoard) {
+        return new ResponseEntity<>(this.service.save(taskBoard).getId(), HttpStatus.CREATED);
     }
 
     @PatchMapping

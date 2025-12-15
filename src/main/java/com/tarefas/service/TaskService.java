@@ -1,6 +1,6 @@
 package com.tarefas.service;
 
-import com.tarefas.dto.creationDTO.TaskCreationDTO;
+import com.tarefas.dto.request.TaskCreationDTO;
 import com.tarefas.model.TaskBoard;
 import com.tarefas.model.TaskColumn;
 import com.tarefas.model.User;
@@ -46,7 +46,7 @@ public class TaskService {
         t.setTaskBoard(
                 entityManager.getReference(TaskBoard.class, taskCreationDTO.taskBoard())
         );
-
+//ERRO de null
         return this.repository.save(t);
     }
 
@@ -91,7 +91,6 @@ public class TaskService {
         if (!task.get().isIsBlocked()){
         throw new IllegalStateException("task is not blocked");
         }
-
 
         var rb = task.get().getBlocked().stream().max(Comparator.comparing( b -> b.getUserBlocked().date()))
                 .orElseThrow(() -> new IllegalStateException("System error, please contact our support, no object found"));

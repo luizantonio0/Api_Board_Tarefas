@@ -1,5 +1,6 @@
 package com.tarefas.model;
 
+import com.tarefas.dto.request.TaskColumnCreationDTO;
 import com.tarefas.model.task.Task;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,19 @@ public class TaskColumn {
     private User author;
     @OneToMany(mappedBy = "taskColumn")
     private List<Task> tasks;
-    @ManyToOne
-    @JoinColumn(name = "taskBoardId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "taskBoardId",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_tb004_tb003")
+    )
     private TaskBoard taskBoard;
+
+    public TaskColumn(TaskColumnCreationDTO taskColumnCreationDTO) {
+        this.title = taskColumnCreationDTO.title();
+        this.description = taskColumnCreationDTO.description();
+        this.author = null;
+        this.tasks = null;
+        this.taskBoard = null;
+    }
 }

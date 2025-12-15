@@ -1,6 +1,6 @@
 package com.tarefas.controller;
 
-import com.tarefas.dto.creationDTO.TaskCreationDTO;
+import com.tarefas.dto.request.TaskCreationDTO;
 import com.tarefas.model.task.Task;
 import com.tarefas.service.TaskService;
 import org.springframework.http.HttpStatus;

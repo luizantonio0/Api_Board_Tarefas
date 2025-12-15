@@ -1,5 +1,6 @@
 package com.tarefas.controller;
 
+import com.tarefas.dto.response.UserResponseDTO;
 import com.tarefas.model.User;
 import com.tarefas.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -15,9 +16,16 @@ public class UserController {
 
     UserService service;
 
-    public UserController(UserService taskBoardService) {
-        this.service = taskBoardService;
+    public UserController(UserService service) {
+        this.service = service;
     }
+    @GetMapping("/login/{id}")
+    public ResponseEntity<UserResponseDTO> getUserByLogin(@PathVariable String id) {
+        return this.service.findByLogin(id)
+                .map(tb -> new ResponseEntity<>(tb, HttpStatus.OK))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable UUID id) {
         return this.service.findById(id)
@@ -31,12 +39,12 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User taskBoard) {
-        return new ResponseEntity<>(this.service.save(taskBoard), HttpStatus.CREATED);
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        return new ResponseEntity<>(this.service.save(user), HttpStatus.CREATED);
     }
 
     @PatchMapping
-    public ResponseEntity<User> updateUser(@RequestBody User taskBoard) {
-        return new ResponseEntity<>(this.service.Update(taskBoard), HttpStatus.OK);
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        return new ResponseEntity<>(this.service.Update(user), HttpStatus.OK);
     }
 }
