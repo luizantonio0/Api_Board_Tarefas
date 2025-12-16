@@ -7,6 +7,7 @@ import com.tarefas.model.User;
 import com.tarefas.model.task.BlockedTask;
 import com.tarefas.model.task.Task;
 import com.tarefas.model.task.changes_tasks.ChangeMadeByUser;
+import com.tarefas.repository.BlockedTaskRepository;
 import com.tarefas.repository.TaskRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,12 @@ import java.util.UUID;
 public class TaskService {
     private final EntityManager entityManager;
     private final TaskRepository repository;
+    private final BlockedTaskRepository blockedTaskRepository;
 
-    public TaskService(EntityManager entityManager, TaskRepository repository) {
+    public TaskService(EntityManager entityManager, TaskRepository repository, BlockedTaskRepository blockedTaskRepository) {
         this.entityManager = entityManager;
         this.repository = repository;
+        this.blockedTaskRepository = blockedTaskRepository;
     }
 
     public Optional<Task> findById(UUID id) {
@@ -58,7 +61,7 @@ public class TaskService {
         this.repository.deleteById(id);
     }
 
-    public Optional<Task> blockTask(UUID id, String reason, User user){
+    public Optional<Task> blockTask(UUID id, String reason, UUID user){
         var task = repository.findById(id);
         if(task.isEmpty()){
             return Optional.empty();
@@ -67,22 +70,25 @@ public class TaskService {
         if (task.get().isIsBlocked()){
             throw new IllegalStateException("task is already blocked");
         }
-
-        task.get().getBlocked().add( new BlockedTask(
+        var bts =  new BlockedTask(
                 reason,
                 task.get(),
-                new ChangeMadeByUser(user.getId(),
+                new ChangeMadeByUser(user,
                         OffsetDateTime.now())
-                )
+        );
+
+        task.get().getBlocked().add(
+                bts
         );
 
         task.get().setIsBlocked(true);
+        this.blockedTaskRepository.save(bts);
         this.repository.save(task.get());
 
         return task;
     }
 
-    public Optional<Task> unblockTask(UUID id, String reason, User user){
+    public Optional<Task> unblockTask(UUID id, String reason, UUID user){
         var task = repository.findById(id);
             if(task.isEmpty()){
             return Optional.empty();
@@ -95,10 +101,10 @@ public class TaskService {
         var rb = task.get().getBlocked().stream().max(Comparator.comparing( b -> b.getUserBlocked().date()))
                 .orElseThrow(() -> new IllegalStateException("System error, please contact our support, no object found"));
 
-        if (rb.getUserUnblocked() == null) throw new IllegalStateException("System error, please contact our support, illegal object found");
+        //if (rb.getUserUnblocked() == null) throw new IllegalStateException("System error, please contact our support, illegal object found");
 
         rb.setReasonUnblocked(reason);
-        rb.setUserBlocked(new ChangeMadeByUser(user.getId(), OffsetDateTime.now()));
+        rb.setUserBlocked(new ChangeMadeByUser(user, OffsetDateTime.now()));
         rb.setBlocked(false);
         task.get().setIsBlocked(false);
 

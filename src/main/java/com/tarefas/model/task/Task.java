@@ -81,7 +81,7 @@ public class Task {
     public Task(TaskCreationDTO taskCreationDTO) {
         var now = OffsetDateTime.now();
 
-        this.name = taskCreationDTO.name();
+        this.name = taskCreationDTO.title();
         this.description = taskCreationDTO.description();
         this.creator = null;
         this.manager = null;
@@ -98,5 +98,14 @@ public class Task {
         this.completionDate = null;
         this.completedDate = null;
         this.startDate = null;
+    }
+    public boolean getCompleted(){
+        return completed;
+    }
+    public boolean getCancelled(){
+        return cancelled;
+    }
+    public boolean IsBlocked(){
+        return IsBlocked;
     }
 }
