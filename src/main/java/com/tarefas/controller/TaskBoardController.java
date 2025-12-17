@@ -1,6 +1,7 @@
 package com.tarefas.controller;
 
 import com.tarefas.dto.request.TaskBoardCreationDTO;
+import com.tarefas.dto.response.TaskBoardResponseDTO;
 import com.tarefas.model.TaskBoard;
 import com.tarefas.service.TaskBoardService;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,10 @@ public class TaskBoardController {
         this.service = taskBoardService;
     }
     @GetMapping("/{id}")
-    public ResponseEntity<TaskBoard> getTaskBoard(@PathVariable UUID id) {
+    public ResponseEntity<TaskBoardResponseDTO> getTaskBoard(@PathVariable UUID id) {
         return this.service.findById(id)
-                .map(tb -> new ResponseEntity<>(tb, HttpStatus.OK))
+                .map(tb -> new ResponseEntity<>(
+                        new TaskBoardResponseDTO(tb), HttpStatus.OK))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 

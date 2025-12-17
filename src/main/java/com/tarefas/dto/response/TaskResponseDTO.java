@@ -5,24 +5,24 @@ import com.tarefas.model.task.Task;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 public record TaskResponseDTO(
         UUID id,
         String name,
         String description,
-        UserResponseDTO creator,
-        UserResponseDTO manager,
+        UserSimpleResponseDTO creator,
+        UserSimpleResponseDTO manager,
         UUID completedBy,
         TaskStatus status,
         boolean completed,
         boolean cancelled,
         boolean IsBlocked,
-        TaskColumnResponseDTO taskColumn,
-        TaskBoardResponseDTO taskBoard,
+        UUID taskColumn,
+        UUID taskBoard,
         OffsetDateTime enteredCurrentColumnAt,
-        Stream<BlockedTaskResponseDTO> blocked,
+        List<BlockedTaskResponseDTO> blocked,
         OffsetDateTime createdAt,
         OffsetDateTime completionDate,
         OffsetDateTime completedDate,
@@ -33,21 +33,21 @@ public record TaskResponseDTO(
                         task.getId(),
                         task.getName(),
                         task.getDescription(),
-                        new UserResponseDTO(
+                        new UserSimpleResponseDTO(
                                 task.getCreator()),
-                        new UserResponseDTO(
+                        new UserSimpleResponseDTO(
                                 task.getManager()),
                         task.getCompletedBy(),
                         task.getStatus(),
                         task.getCompleted(),
                         task.getCancelled(),
                         task.IsBlocked(),
-                        new TaskColumnResponseDTO( task.getTaskColumn()),
-                        new TaskBoardResponseDTO(task.getTaskBoard()),
+                        task.getTaskColumn().getId(),
+                        task.getTaskBoard().getId(),
                         task.getEnteredCurrentColumnAt(),
                         task.getBlocked().stream().map(
                                 BlockedTaskResponseDTO::new
-                        ),
+                        ).toList(),
                         task.getCreatedAt(),
                         task.getCompletionDate(),
                         task.getCompletedDate(),

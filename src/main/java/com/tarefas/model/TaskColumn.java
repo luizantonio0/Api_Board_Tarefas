@@ -3,7 +3,6 @@ package com.tarefas.model;
 import com.tarefas.dto.request.TaskColumnCreationDTO;
 import com.tarefas.model.task.Task;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "tb003_task_column")
 public class TaskColumn {
@@ -25,6 +23,8 @@ public class TaskColumn {
     private String title;
     @Column(length = 200)
     private String description;
+    @Column(nullable = false, updatable = false)
+    private boolean isDefault;
     @ManyToOne
     @JoinColumn(name = "userAuthorId")
     private User author;
@@ -44,5 +44,6 @@ public class TaskColumn {
         this.author = null;
         this.tasks = null;
         this.taskBoard = null;
+        this.isDefault = false;
     }
 }

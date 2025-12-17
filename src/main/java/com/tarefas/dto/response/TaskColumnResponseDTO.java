@@ -9,11 +9,20 @@ public record TaskColumnResponseDTO(
         UUID id,
         String title,
         String description,
-        UserResponseDTO author,
+        UserSimpleResponseDTO author,
         UUID taskBoard,
         List<TaskResponseDTO> tasks
 ) {
     public TaskColumnResponseDTO(TaskColumn taskColumn){
-        this(taskColumn.getId(), taskColumn.getTitle(), taskColumn.getDescription(), new UserResponseDTO(taskColumn.getAuthor()), taskColumn.getTaskBoard().getId(), null);
+        this(
+                taskColumn.getId(),
+                taskColumn.getTitle(),
+                taskColumn.getDescription(),
+                new UserSimpleResponseDTO(taskColumn.getAuthor()),
+                taskColumn.getTaskBoard().getId(),
+                (taskColumn.getTasks() != null)?
+                taskColumn.getTasks().stream().map(TaskResponseDTO :: new).toList()
+                        : null
+        );
     }
 }
