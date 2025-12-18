@@ -4,8 +4,9 @@ import java.util.UUID;
 
 public record BlockedTaskCreationDTO
 (
-    UUID userId,
-    String reasonBlocked,
-    boolean blocked
+        UUID taskId,
+        UUID userId,
+        String reasonBlocked,
+        boolean blocked
 )
 {}

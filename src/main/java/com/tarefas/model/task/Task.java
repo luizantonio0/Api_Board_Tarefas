@@ -108,4 +108,8 @@ public class Task {
     public boolean IsBlocked(){
         return IsBlocked;
     }
+
+    public static List<TaskStatus> allowTransition(){
+        return List.of(TaskStatus.STARTED, TaskStatus.IN_PROGRESS);
+    }
 }

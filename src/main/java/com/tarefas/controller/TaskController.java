@@ -1,7 +1,9 @@
 package com.tarefas.controller;
 
 import com.tarefas.dto.request.BlockedTaskCreationDTO;
+import com.tarefas.dto.request.ChangeColumnDTO;
 import com.tarefas.dto.request.TaskCreationDTO;
+import com.tarefas.dto.response.TaskColumnResponseDTO;
 import com.tarefas.dto.response.TaskResponseDTO;
 import com.tarefas.model.task.Task;
 import com.tarefas.service.TaskService;
@@ -42,23 +44,32 @@ public class TaskController {
     public ResponseEntity<Task> updateTask(@RequestBody Task taskBoard) {
         return new ResponseEntity<>(this.service.Update(taskBoard), HttpStatus.OK);
     }
-    @PatchMapping("/block/{id}")
-    public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable UUID id, @RequestBody BlockedTaskCreationDTO blockedTaskDTO) {
+    @PatchMapping("/block")
+    public ResponseEntity<TaskResponseDTO> updateTask(@RequestBody BlockedTaskCreationDTO blockedTaskDTO) {
         return (blockedTaskDTO.blocked())
                 ?
             new ResponseEntity<>(
                     new TaskResponseDTO(
                         this.service.blockTask(
-                        id, blockedTaskDTO.reasonBlocked(), blockedTaskDTO.userId()).get()
+                        blockedTaskDTO.taskId(), blockedTaskDTO.reasonBlocked(), blockedTaskDTO.userId())
                     )
                     , HttpStatus.OK)
                 :
             new ResponseEntity<>(
                     new TaskResponseDTO(
                         this.service.unblockTask(
-                        id, blockedTaskDTO.reasonBlocked(), blockedTaskDTO.userId()).get()
+                        blockedTaskDTO.taskId(), blockedTaskDTO.reasonBlocked(), blockedTaskDTO.userId())
                     )
                     , HttpStatus.OK);
+    }
+
+    @PatchMapping("/changeColumn")
+    public ResponseEntity<TaskColumnResponseDTO> updateColumn(@RequestBody ChangeColumnDTO changeColumnDTO){
+        return new ResponseEntity<>(
+                new TaskColumnResponseDTO(
+                    this.service.changeTaskColumn(changeColumnDTO.taskId(), changeColumnDTO.taskColumnId())
+                ),
+                HttpStatus.OK);
     }
 
 }

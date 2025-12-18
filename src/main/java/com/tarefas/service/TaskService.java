@@ -4,7 +4,6 @@ import com.tarefas.dto.request.TaskCreationDTO;
 import com.tarefas.model.TaskBoard;
 import com.tarefas.model.TaskColumn;
 import com.tarefas.model.User;
-import com.tarefas.model.enums.task.TaskStatus;
 import com.tarefas.model.task.BlockedTask;
 import com.tarefas.model.task.Task;
 import com.tarefas.model.task.changes_tasks.ChangeMadeByUser;
@@ -65,44 +64,46 @@ public class TaskService {
         this.repository.deleteById(id);
     }
 
-    public Optional<Task> blockTask(UUID id, String reason, UUID user){
-        var task = repository.findById(id);
-        if(task.isEmpty()){
-            return Optional.empty();
+    public Task blockTask(UUID id, String reason, UUID user){
+        var opTask = repository.findById(id);
+        if(opTask.isEmpty()){
+            throw new IllegalStateException("task not found");
         }
+        var task = opTask.get();
 
-        if (task.get().isIsBlocked()){
+        if (task.isIsBlocked()){
             throw new IllegalStateException("task is already blocked");
         }
         var bts =  new BlockedTask(
                 reason,
-                task.get(),
+                task,
                 new ChangeMadeByUser(user,
                         OffsetDateTime.now())
         );
 
-        task.get().getBlocked().add(
+        task.getBlocked().add(
                 bts
         );
 
-        task.get().setIsBlocked(true);
+        task.setIsBlocked(true);
         this.blockedTaskRepository.save(bts);
-        this.repository.save(task.get());
+        this.repository.save(task);
 
         return task;
     }
 
-    public Optional<Task> unblockTask(UUID id, String reason, UUID user){
-        var task = repository.findById(id);
-            if(task.isEmpty()){
-            return Optional.empty();
+    public Task unblockTask(UUID id, String reason, UUID user){
+        var opTask = repository.findById(id);
+            if(opTask.isEmpty()){
+            throw new IllegalStateException("task not found");
         }
+        var task = opTask.get();
 
-        if (!task.get().isIsBlocked()){
+        if (!task.isIsBlocked()){
         throw new IllegalStateException("task is not blocked");
         }
 
-        var rb = task.get().getBlocked().stream().max(Comparator.comparing( b -> b.getUserBlocked().date()))
+        var rb = task.getBlocked().stream().max(Comparator.comparing( b -> b.getUserBlocked().date()))
                 .orElseThrow(() -> new IllegalStateException("System error, please contact our support, no object found"));
 
         if (rb.getUserUnblocked() == null) {
@@ -111,16 +112,16 @@ public class TaskService {
         rb.setReasonUnblocked(reason);
         rb.setUserBlocked(new ChangeMadeByUser(user, OffsetDateTime.now()));
         rb.setBlocked(false);
-        task.get().setIsBlocked(false);
+        task.setIsBlocked(false);
 
-        this.repository.save(task.get());
+        this.repository.save(task);
 
         return task;
     }
 
-    public TaskColumn changeTaskColumn(UUID id, UUID taskColumnId){
+    public TaskColumn changeTaskColumn(UUID taskId, UUID taskColumnId){
         var col = taskColumnRepository.findById(taskColumnId);
-        var task = repository.findById(id);
+        var task = repository.findById(taskId);
 
         if (col.isEmpty() || task.isEmpty()){
             throw new IllegalStateException("task column not found");
@@ -130,25 +131,20 @@ public class TaskService {
             throw new IllegalStateException("task is blocked");
         }
 
-        if (task.get().getStatus() == TaskStatus.COMPLETED || task.get().getStatus() == TaskStatus.CANCELLED){
-            throw new IllegalStateException("task is " + task.get().getStatus());
+        if (Task.allowTransition().contains(task.get().getStatus())) {
+            throw new IllegalStateException("task is not in a valid state to change column: " + task.get().getStatus());
         }
 
-        if (col.get().isDefault() )
+        task.get().getTaskColumn().getTasks().remove(task.get());
+        taskColumnRepository.save(task.get().getTaskColumn());
 
-
-
-        if (task.get().getStatus() != TaskStatus.STARTED){
-
-        }
+        col.get().getTasks().add(task.get());
+        taskColumnRepository.save(task.get().getTaskColumn());
 
         task.get().setTaskColumn(col.get());
-        //TODO ALterar metodo padrao do java para um adicionar personalizado na classe TaskColumn
-        col.get().getTasks().add(task.get());
+        task.get().setEnteredCurrentColumnAt(OffsetDateTime.now());
         repository.save(task.get());
 
-
         return col.get();
-
     }
 }
