@@ -19,6 +19,7 @@ public class UserController {
     public UserController(UserService service) {
         this.service = service;
     }
+
     @GetMapping("/login/{id}")
     public ResponseEntity<UserResponseDTO> getUserByLogin(@PathVariable String id) {
         return this.service.findByLogin(id)
