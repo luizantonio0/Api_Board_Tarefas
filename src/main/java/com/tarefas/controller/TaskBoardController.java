@@ -38,9 +38,8 @@ public class TaskBoardController {
     @Operation(summary = "Deleta um board de tarefas")
     @ApiResponse(responseCode = "204", description = "Board de tarefas deletado")
     @ApiResponse(responseCode = "404", description = "Board de tarefas não encontrado")
-    public ResponseEntity deleteTaskBoard(@PathVariable UUID id) {
+    public void deleteTaskBoard(@PathVariable UUID id) {
         this.service.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Cria um novo board de tarefas")
