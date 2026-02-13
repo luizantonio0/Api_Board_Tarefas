@@ -119,7 +119,7 @@ public class TaskService {
         return task;
     }
 
-    public TaskColumn changeTaskColumn(UUID taskId, UUID taskColumnId){
+    public Task changeTaskColumn(UUID taskId, UUID taskColumnId){
         var col = taskColumnRepository.findById(taskColumnId);
         var task = repository.findById(taskId);
 
@@ -145,6 +145,6 @@ public class TaskService {
         task.get().setEnteredCurrentColumnAt(OffsetDateTime.now());
         repository.save(task.get());
 
-        return col.get();
+        return task.get();
     }
 }

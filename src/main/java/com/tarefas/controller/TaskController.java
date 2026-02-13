@@ -86,9 +86,9 @@ public class TaskController {
     @Operation(summary = "Altera a coluna")
     @ApiResponse(responseCode = "200", description = "coluna altera")
     @ApiResponse(responseCode = "404", description = "tarefa não encontrada")
-    public ResponseEntity<TaskColumnResponseDTO> updateColumn(@RequestBody ChangeColumnDTO changeColumnDTO){
+    public ResponseEntity<TaskResponseDTO> updateColumn(@RequestBody ChangeColumnDTO changeColumnDTO){
         return new ResponseEntity<>(
-                new TaskColumnResponseDTO(
+                new TaskResponseDTO(
                     this.service.changeTaskColumn(changeColumnDTO.taskId(), changeColumnDTO.taskColumnId())
                 ),
                 HttpStatus.OK);
